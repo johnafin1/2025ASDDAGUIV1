@@ -1,0 +1,20 @@
+<div class="node">
+    <div class="node-content">
+      <img [src]="node.imageUrl" alt="{{ node.text }}" class="node-image" />
+      <span class="node-text">{{ node.text }}</span>
+      <!-- Allow adding children only if the node is not on the third layer -->
+      <button (click)="onAddChild()" *ngIf="node.layer < 3">Add Child</button>
+      <button (click)="onRemove()">Remove</button>
+    </div>
+    <!-- Recursive rendering of child nodes -->
+    <div class="child-nodes" *ngIf="getChildNodes().length > 0">
+      <ng-container *ngFor="let child of getChildNodes()">
+        <app-node 
+          [node]="child" 
+          [allNodes]="allNodes"
+          (addChild)="addChild.emit($event)" 
+          (remove)="remove.emit($event)">
+        </app-node>
+      </ng-container>
+    </div>
+  </div>
