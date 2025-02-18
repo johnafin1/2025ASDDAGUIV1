@@ -1,33 +1,37 @@
 <div class="node">
   <div class="node-content">
-    <!-- Display the node image -->
-    <img [src]="node.imageUrl" alt="{{ node.text }}" class="node-image" />
+    <!-- Image container with drag/drop events -->
+    <div class="node-image-container" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+      <img [src]="node.imageUrl" alt="{{ node.text }}" class="node-image" />
+    </div>
+    
+    <!-- Text area: if in edit mode, show an input field; otherwise, just display text -->
+    <div class="node-text-container">
+      <ng-container *ngIf="editMode; else displayText">
+        <input type="text" [(ngModel)]="node.text" placeholder="Enter word" />
+      </ng-container>
+      <ng-template #displayText>
+        <span>{{ node.text }}</span>
+      </ng-template>
+    </div>
 
-    <!-- When NOT editing, display text and the Edit button -->
-    <ng-container *ngIf="!isEditing">
-      <span class="node-text">{{ node.text }}</span>
-      <button (click)="toggleEdit()">Edit</button>
-    </ng-container>
-
-    <!-- When editing, show input fields for text and image URL -->
-    <ng-container *ngIf="isEditing">
-      <input type="text" [(ngModel)]="editedText" placeholder="Enter word" />
-      <input type="text" [(ngModel)]="editedImageUrl" placeholder="Enter image URL" />
-      <button (click)="saveEdit()">Save</button>
-      <button (click)="cancelEdit()">Cancel</button>
-    </ng-container>
-
-    <!-- Additional controls -->
-    <button (click)="onAddChild()" *ngIf="node.layer < 3">Add Child</button>
-    <button (click)="onRemove()">Remove</button>
+    <!-- Action buttons shown only in edit mode -->
+    <div *ngIf="editMode || node.layer < 3" class="node-actions">
+      <span *ngIf="node.layer < 3"><button class="btn btn-info" (click)="onAddChild()">Add Child</button></span>
+      <button class="btn btn-warning" (click)="onRemove()">Remove</button>
+      <span *ngIf="node.layer < 3"><button class="btn btn-light" (click)="toggleExpanded()">
+        {{ expanded ? 'Collapse' : 'Expand' }}
+      </button></span>
+    </div>
   </div>
 
-  <!-- Recursive rendering of child nodes -->
-  <div class="child-nodes" *ngIf="getChildNodes().length > 0">
+  <!-- Recursively render child nodes if expanded -->
+  <div class="child-nodes" *ngIf="expanded && getChildNodes().length > 0">
     <ng-container *ngFor="let child of getChildNodes()">
       <app-node 
         [node]="child" 
-        [allNodes]="allNodes"
+        [allNodes]="allNodes" 
+        [editMode]="editMode"
         (addChild)="addChild.emit($event)" 
         (remove)="remove.emit($event)">
       </app-node>

@@ -219,4 +219,67 @@ export class AppComponent {
     };
     reader.readAsText(file);
   }
+
+  exportAsJSON(): void {
+    const dataStr = JSON.stringify(this.nodes, null, 2); // pretty-print with indentation
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+  
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'language_pack.json'; // Filename for download
+    a.click();
+  
+    // Clean up the URL object after download
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportAsCSV(): void {
+    // Define the CSV header
+    let csvContent = 'text,imageUrl,layer,parentId,action\n';
+  
+    // Loop over each node and append CSV rows
+    this.nodes.forEach(node => {
+      // Ensure to handle null/undefined fields
+      const text = node.text || '';
+      const imageUrl = node.imageUrl || '';
+      const layer = node.layer;
+      const parentId = node.parentId || '';
+      const action = node.action || '';
+      
+      // Escape commas in text fields if needed
+      const row = `"${text}","${imageUrl}",${layer},"${parentId}","${action}"\n`;
+      csvContent += row;
+    });
+  
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+  
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'language_pack.csv';
+    a.click();
+  
+    window.URL.revokeObjectURL(url);
+  }
+
+  importJSON(event: any): void {
+    const file = event.target.files[0];
+    if (!file) {
+      alert('No file selected.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      try {
+        const jsonData = JSON.parse(e.target.result);
+        // Validate jsonData as needed; here we assume it's an array of Node objects.
+        this.nodes = jsonData;
+        alert('JSON import successful!');
+      } catch (err) {
+        alert('Error parsing JSON: ' + err);
+      }
+    };
+    reader.readAsText(file);
+  }
 }

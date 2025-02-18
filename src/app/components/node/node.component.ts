@@ -4,8 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Node } from '../../models/node.model';
 
 // Import Node modules (available in Electron with nodeIntegration enabled)
-import * as fs from 'fs';
-import * as path from 'path';
+declare const window: any;
+declare const __dirname: string;
+const fs = window.require('fs');
+const path = window.require('path');
 @Component({
   selector: 'app-node',
   standalone: true,  // if using standalone; adjust if you're not
@@ -16,13 +18,12 @@ import * as path from 'path';
 export class NodeComponent {
   @Input() node!: Node;
   @Input() allNodes: Node[] = [];
+  @Input() editMode: boolean = false;
   @Output() addChild = new EventEmitter<Node>();
   @Output() remove = new EventEmitter<string>();
 
   // New properties for inline editing.
-  isEditing: boolean = false;
-  editedText: string = '';
-  editedImageUrl: string = '';
+  expanded: boolean = true;
 
   // Returns the child nodes of this node.
   getChildNodes(): Node[] {
@@ -37,22 +38,42 @@ export class NodeComponent {
     this.remove.emit(this.node.id);
   }
 
-  // Toggle into edit mode and set up initial values.
-  toggleEdit(): void {
-    this.isEditing = true;
-    this.editedText = this.node.text;
-    this.editedImageUrl = this.node.imageUrl;
+  toggleExpanded(): void {
+    this.expanded = !this.expanded;
   }
 
-  // Save changes to the node and exit edit mode.
-  saveEdit(): void {
-    this.node.text = this.editedText;
-    this.node.imageUrl = this.editedImageUrl;
-    this.isEditing = false;
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
   }
 
-  // Cancel editing and revert to display mode.
-  cancelEdit(): void {
-    this.isEditing = false;
+  // When a file is dropped on the image container:
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
+      // Check if the file is an image.
+      if (file.type.startsWith('image/')) {
+        // Define a target folder (e.g. a folder named "user_images" in the app folder).
+        const targetFolder = path.join(__dirname, 'user_images');
+        // Create the folder if it doesn't exist.
+        if (!fs.existsSync(targetFolder)) {
+          fs.mkdirSync(targetFolder, { recursive: true });
+        }
+        // Build a target file name using a timestamp.
+        const targetFile = path.join(targetFolder, `${Date.now()}_${file.name}`);
+        // Electron's File objects have a "path" property.
+        const sourcePath = file.webkitRelativePath;
+        // Copy the file to the target folder.
+        fs.copyFile(sourcePath, targetFile, (err: any) => {
+          if (err) {
+            console.error('Error copying file:', err);
+          } else {
+            // Update the node's imageUrl with a relative path.
+            const relativePath = path.relative(__dirname, targetFile);
+            this.node.imageUrl = relativePath;
+          }
+        });
+      }
+    }
   }
 }

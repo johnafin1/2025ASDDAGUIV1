@@ -6,27 +6,33 @@
   <h2>{{ title }}</h2>
 
   <!-- Toggle between Edit and Use modes -->
-  <button (click)="toggleMode()">
+  <button class="btn mb-2 btn-primary" (click)="toggleMode()">
     Switch to {{ mode === 'edit' ? 'Use' : 'Edit' }} Mode
   </button>
+  <div *ngIf="mode ==='edit'">
+    <!-- Save/Load Controls -->
+    <button class="btn mb-2 btn-secondary" (click)="saveDAG()">Save Locally</button>
+    <button class="btn mb-2 btn-secondary" (click)="loadDAG()">Load Locally</button>
+    <button class="btn mb-2 btn-secondary" (click)="exportAsJSON()">Export as JSON</button>
+    <button class="btn mb-2 btn-secondary" (click)="exportAsCSV()">Export as CSV</button>
 
-  <!-- Save/Load Controls -->
-  <button (click)="saveDAG()">Save</button>
-  <button (click)="loadDAG()">Load</button>
+    <!-- CSV Import (only in Edit mode) -->
+    <button class="btn mb-2 btn-secondary" (click)="exportAsJSON()" class="btn btn-primary">Export as JSON</button>
+    <input type="file" accept=".json" (change)="importJSON($event)" class="form-control-file" />
 
-  <!-- CSV Import (only in Edit mode) -->
-  <div *ngIf="mode === 'edit'">
-    <input type="file" accept=".csv" (change)="importCSV($event)" />
+    <!-- CSV Export / Import -->
+    <button class="btn mb-2 btn-secondary" (click)="exportAsCSV()" class="btn btn-secondary">Export as CSV</button>
+    <input type="file" accept=".csv" (change)="importCSV($event)" class="form-control-file" />
   </div>
-
   <!-- Edit Mode: Builder View -->
   <div *ngIf="mode === 'edit'">
-    <button (click)="addRootNode()">Add Root Node</button>
+    <button class="btn btn-secondary" (click)="addRootNode()">Add Root Node</button>
     <div class="builder-view">
       <ng-container *ngFor="let node of getRootNodes()">
         <app-node 
           [node]="node" 
           [allNodes]="nodes"
+          [editMode]="true"
           (addChild)="addChildNode($event)" 
           (remove)="removeNode($event)">
         </app-node>
@@ -38,8 +44,8 @@
   <div *ngIf="mode === 'use'">
     <div class="use-header">
       <h2>Sentence: {{ getSentence() }}</h2>
-      <button (click)="goBack()" [disabled]="currentPath.length === 0">Back</button>
-      <button (click)="speakSentence()">Speak Sentence</button>
+      <button class="btn btn-warning" (click)="goBack()" [disabled]="currentPath.length === 0">Back</button>
+      <button class="btn btn-danger" (click)="speakSentence()">Speak Sentence</button>
     </div>
     <div class="grid-container">
       <div class="grid-item"
