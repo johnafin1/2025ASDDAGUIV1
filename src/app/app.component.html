@@ -1,15 +1,59 @@
+<header>
+  <img src="assets/logo.svg" alt="Logo" />
+  <h1>2025ASDDAGUI</h1>
+</header>
 <div class="container">
-  <h1>{{ title }}</h1>
-  <button (click)="addRootNode()">Add Root Node</button>
-  <div class="nodes-container">
-    <!-- Render each root node recursively -->
-    <ng-container *ngFor="let node of getRootNodes()">
-      <app-node 
-        [node]="node" 
-        [allNodes]="nodes"
-        (addChild)="addChildNode($event)" 
-        (remove)="removeNode($event)">
-      </app-node>
-    </ng-container>
+  <h2>{{ title }}</h2>
+
+  <!-- Toggle between Edit and Use modes -->
+  <button (click)="toggleMode()">
+    Switch to {{ mode === 'edit' ? 'Use' : 'Edit' }} Mode
+  </button>
+
+  <!-- Save/Load Controls -->
+  <button (click)="saveDAG()">Save</button>
+  <button (click)="loadDAG()">Load</button>
+
+  <!-- CSV Import (only in Edit mode) -->
+  <div *ngIf="mode === 'edit'">
+    <input type="file" accept=".csv" (change)="importCSV($event)" />
+  </div>
+
+  <!-- Edit Mode: Builder View -->
+  <div *ngIf="mode === 'edit'">
+    <button (click)="addRootNode()">Add Root Node</button>
+    <div class="builder-view">
+      <ng-container *ngFor="let node of getRootNodes()">
+        <app-node 
+          [node]="node" 
+          [allNodes]="nodes"
+          (addChild)="addChildNode($event)" 
+          (remove)="removeNode($event)">
+        </app-node>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Use Mode: Usability View -->
+  <div *ngIf="mode === 'use'">
+    <div class="use-header">
+      <h2>Sentence: {{ getSentence() }}</h2>
+      <button (click)="goBack()" [disabled]="currentPath.length === 0">Back</button>
+      <button (click)="speakSentence()">Speak Sentence</button>
+    </div>
+    <div class="grid-container">
+      <div class="grid-item"
+           *ngFor="let cell of getGridCells()"
+           (click)="cell ? onUseNodeClick(cell) : null"
+           [ngClass]="{'empty': !cell}">
+        <ng-container *ngIf="cell; else emptyCell">
+          <img [src]="cell.imageUrl" alt="{{ cell.text }}" />
+          <div>{{ cell.text }}</div>
+        </ng-container>
+        <ng-template #emptyCell>
+          <div class="empty-label">Empty</div>
+        </ng-template>
+      </div>
+    </div>
   </div>
 </div>

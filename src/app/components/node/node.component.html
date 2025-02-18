@@ -1,20 +1,36 @@
 <div class="node">
-    <div class="node-content">
-      <img [src]="node.imageUrl" alt="{{ node.text }}" class="node-image" />
+  <div class="node-content">
+    <!-- Display the node image -->
+    <img [src]="node.imageUrl" alt="{{ node.text }}" class="node-image" />
+
+    <!-- When NOT editing, display text and the Edit button -->
+    <ng-container *ngIf="!isEditing">
       <span class="node-text">{{ node.text }}</span>
-      <!-- Allow adding children only if the node is not on the third layer -->
-      <button (click)="onAddChild()" *ngIf="node.layer < 3">Add Child</button>
-      <button (click)="onRemove()">Remove</button>
-    </div>
-    <!-- Recursive rendering of child nodes -->
-    <div class="child-nodes" *ngIf="getChildNodes().length > 0">
-      <ng-container *ngFor="let child of getChildNodes()">
-        <app-node 
-          [node]="child" 
-          [allNodes]="allNodes"
-          (addChild)="addChild.emit($event)" 
-          (remove)="remove.emit($event)">
-        </app-node>
-      </ng-container>
-    </div>
+      <button (click)="toggleEdit()">Edit</button>
+    </ng-container>
+
+    <!-- When editing, show input fields for text and image URL -->
+    <ng-container *ngIf="isEditing">
+      <input type="text" [(ngModel)]="editedText" placeholder="Enter word" />
+      <input type="text" [(ngModel)]="editedImageUrl" placeholder="Enter image URL" />
+      <button (click)="saveEdit()">Save</button>
+      <button (click)="cancelEdit()">Cancel</button>
+    </ng-container>
+
+    <!-- Additional controls -->
+    <button (click)="onAddChild()" *ngIf="node.layer < 3">Add Child</button>
+    <button (click)="onRemove()">Remove</button>
   </div>
+
+  <!-- Recursive rendering of child nodes -->
+  <div class="child-nodes" *ngIf="getChildNodes().length > 0">
+    <ng-container *ngFor="let child of getChildNodes()">
+      <app-node 
+        [node]="child" 
+        [allNodes]="allNodes"
+        (addChild)="addChild.emit($event)" 
+        (remove)="remove.emit($event)">
+      </app-node>
+    </ng-container>
+  </div>
+</div>

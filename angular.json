@@ -13,9 +13,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/2025-asddagui",
+            "outputPath": "dist/2025ASDDAGUI",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "baseHref": "./",
             "polyfills": [
               "zone.js"
             ],

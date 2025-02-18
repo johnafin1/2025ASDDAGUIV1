@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    width="200" height="200"
+    viewBox="0 0 200 200"
+    xmlns="http://www.w3.org/2000/svg"
+>
+    <!-- Speech Bubble -->
+    <path d="M50 50 C30 50, 30 100, 50 100 H120 C140 100, 140 50, 120 50 Z" 
+        fill="#4285F4" stroke="#1A73E8" stroke-width="4" rx="10" />
+    
+    <!-- Text Blocks -->
+    <rect x="60" y="55" width="20" height="20" fill="#34A853" rx="5" />
+    <rect x="85" y="55" width="20" height="20" fill="#FBBC05" rx="5" />
+    <rect x="110" y="55" width="20" height="20" fill="#EA4335" rx="5" />
+    
+    <!-- Letters -->
+    <text x="66" y="70" font-size="12" font-family="Arial" fill="white" font-weight="bold">A</text>
+    <text x="91" y="70" font-size="12" font-family="Arial" fill="white" font-weight="bold">A</text>
+    <text x="116" y="70" font-size="12" font-family="Arial" fill="white" font-weight="bold">C</text>
+    
+    <!-- Smile Face -->
+    <circle cx="85" cy="110" r="5" fill="#FFD700" />
+    <circle cx="110" cy="110" r="5" fill="#FFD700" />
+    <path d="M 85 120 Q 97 130, 110 120" stroke="#FFD700" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

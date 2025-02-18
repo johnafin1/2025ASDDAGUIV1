@@ -1,7 +1,55 @@
 .container {
-    padding: 20px;
-  }
-  
-  .nodes-container {
-    margin-top: 20px;
-  }
+  padding: 20px;
+}
+
+.builder-view {
+  margin-top: 20px;
+}
+
+/* Use Mode Header */
+.use-header {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Grid for Use Mode: 7 rows x 12 columns grid.
+   Here we use 12 columns. The rows will adjust based on content. */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-gap: 10px;
+  margin-top: 20px;
+}
+
+/* Regular grid items */
+.grid-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.grid-item:hover {
+  background-color: #e6f7ff;
+}
+
+/* Style for empty cells */
+.grid-item.empty {
+  background-color: #f0f0f0;  /* Light gray background */
+  cursor: default;
+}
+
+.grid-item img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Label for empty cells */
+.empty-label {
+  color: #aaa;
+  font-style: italic;
+}
