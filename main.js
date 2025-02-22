@@ -17,7 +17,7 @@ function createWindow() {
   win.loadFile(path.join(__dirname, 'dist/2025ASDDAGUI/browser/index.html'));
 
   // Uncomment to open the DevTools.
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {

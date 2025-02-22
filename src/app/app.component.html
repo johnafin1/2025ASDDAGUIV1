@@ -4,29 +4,75 @@
 </header>
 <div class="container">
   <h2>{{ title }}</h2>
-
-  <!-- Toggle between Edit and Use modes -->
+  
+  <!-- Toggle Mode Button -->
   <button class="btn mb-2 btn-primary" (click)="toggleMode()">
     Switch to {{ mode === 'edit' ? 'Use' : 'Edit' }} Mode
   </button>
-  <div *ngIf="mode ==='edit'">
-    <!-- Save/Load Controls -->
-    <button class="btn mb-2 btn-secondary" (click)="saveDAG()">Save Locally</button>
-    <button class="btn mb-2 btn-secondary" (click)="loadDAG()">Load Locally</button>
-    <button class="btn mb-2 btn-secondary" (click)="exportAsJSON()">Export as JSON</button>
-    <button class="btn mb-2 btn-secondary" (click)="exportAsCSV()">Export as CSV</button>
-
-    <!-- CSV Import (only in Edit mode) -->
-    <button class="btn mb-2 btn-secondary" (click)="exportAsJSON()" class="btn btn-primary">Export as JSON</button>
-    <input type="file" accept=".json" (change)="importJSON($event)" class="form-control-file" />
-
-    <!-- CSV Export / Import -->
-    <button class="btn mb-2 btn-secondary" (click)="exportAsCSV()" class="btn btn-secondary">Export as CSV</button>
-    <input type="file" accept=".csv" (change)="importCSV($event)" class="form-control-file" />
-  </div>
-  <!-- Edit Mode: Builder View -->
+  
+  <!-- Edit Mode Controls -->
   <div *ngIf="mode === 'edit'">
-    <button class="btn btn-secondary" (click)="addRootNode()">Add Root Node</button>
+    
+    <!-- Save / Load Buttons -->
+    <div class="mb-2">
+      <button class="btn btn-secondary me-2" (click)="saveDAG()">Save Locally</button>
+      <button class="btn btn-secondary" (click)="loadDAG()">Load Locally</button>
+    </div>
+    
+    <!-- Export & Import Controls -->
+    <div class="d-flex align-items-center mb-2">
+      <!-- Export Functions Dropdown -->
+      <div class="btn-group me-2">
+        <button type="button" class="btn btn-primary dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown">
+          Export Functions
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" (click)="exportAsJSON()">Export as JSON</a></li>
+          <li><a class="dropdown-item" (click)="exportAsCSV()">Export as CSV</a></li>
+        </ul>
+      </div>
+      <!-- Import Button -->
+      <button class="btn btn-secondary" (click)="showImportModal = true">
+        Import
+      </button>
+    </div>
+    
+    <!-- Import Modal -->
+    <div class="modal fade" [ngClass]="{'show': showImportModal}" 
+         [ngStyle]="{'display': showImportModal ? 'block' : 'none'}" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Import Language Pack</h5>
+            <button type="button" class="btn-close" (click)="showImportModal = false"></button>
+          </div>
+          <div class="modal-body">
+            <p>Select a JSON or CSV file to import the language pack.</p>
+            <div class="mb-2">
+              <label for="jsonImport" class="form-label">Import JSON:</label>
+              <input type="file" id="jsonImport" class="form-control" accept=".json" (change)="importJSON($event)" />
+            </div>
+            <div>
+              <label for="csvImport" class="form-label">Import CSV:</label>
+              <input type="file" id="csvImport" class="form-control" accept=".csv" (change)="importCSV($event)" />
+            </div>
+            <small class="text-muted">
+              Note: For child nodes to be imported properly, the file must include valid parentId information.
+            </small>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="showImportModal = false">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Builder View -->
+    <div class="mb-2">
+      <button class="btn btn-secondary" (click)="addRootNode()">Add Root Node</button>
+    </div>
     <div class="builder-view">
       <ng-container *ngFor="let node of getRootNodes()">
         <app-node 
@@ -39,6 +85,7 @@
       </ng-container>
     </div>
   </div>
+  
 
   <!-- Use Mode: Usability View -->
   <div *ngIf="mode === 'use'">
