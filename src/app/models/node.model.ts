@@ -6,4 +6,7 @@ export interface Node {
     parentId: string | null;     // null for root nodes
     // Optional: action property for special functions (e.g., backspace, keyboard)
     action?: string | null;
+    x?: number | null;
+    y?: number | null;
+    visible?: boolean | null;
   }

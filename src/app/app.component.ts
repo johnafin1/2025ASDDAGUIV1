@@ -152,6 +152,10 @@ export class AppComponent {
 
   
   // ----------------- Text-to-Speech -----------------
+  backspace(): void {
+    this.sentenceWords.pop();
+  }
+
   speakSentence(): void {
     const sentence = this.getSentence();
     if (!sentence.trim()) {
@@ -205,11 +209,11 @@ export class AppComponent {
         if (line.trim().length === 0) return;
         const parts = line.split(',');
         // CSV format: text,imageUrl,layer,parentId,action
-        const [textVal, imageUrl, layerStr, parentId, action] = parts;
+        const [id, textVal, imageUrl, layerStr, parentId, action] = parts;
         const node: Node = {
-          id: this.generateId(),
+          id: id.trim() === '' ? id.trim() : this.generateId(),
           text: textVal.trim(),
-          imageUrl: imageUrl.trim(),
+          imageUrl: imageUrl.trim() === '' ? imageUrl.trim() : 'assets/default.png',
           layer: parseInt(layerStr, 10),
           parentId: parentId.trim() === '' ? null : parentId.trim(),
           action: action ? action.trim() : null
@@ -219,36 +223,6 @@ export class AppComponent {
       alert('CSV import complete!');
     };
     reader.readAsText(file);
-  }
-  exportAsJSON(): void {
-    const dataStr = JSON.stringify(this.nodes, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'language_pack.json';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  exportAsCSV(): void {
-    let csvContent = 'text,imageUrl,layer,parentId,action\n';
-    this.nodes.forEach(node => {
-      const text = node.text || '';
-      const imageUrl = node.imageUrl || '';
-      const layer = node.layer;
-      const parentId = node.parentId || '';
-      const action = node.action || '';
-      const row = `"${text}","${imageUrl}",${layer},"${parentId}","${action}"\n`;
-      csvContent += row;
-    });
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'language_pack.csv';
-    a.click();
-    window.URL.revokeObjectURL(url);
   }
 
   importJSON(event: any): void {
@@ -269,6 +243,38 @@ export class AppComponent {
       }
     };
     reader.readAsText(file);
+  }
+
+  exportAsJSON(): void {
+    const dataStr = JSON.stringify(this.nodes, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'language_pack.json';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportAsCSV(): void {
+    let csvContent = 'id,text,imageUrl,layer,parentId,action\n';
+    this.nodes.forEach(node => {
+      const id = node.id || '';
+      const text = node.text || '';
+      const imageUrl = node.imageUrl || '';
+      const layer = node.layer;
+      const parentId = node.parentId || '';
+      const action = node.action || '';
+      const row = `"${id}","${text}","${imageUrl}",${layer},"${parentId}","${action}"\n`;
+      csvContent += row;
+    });
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'language_pack.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
 }
