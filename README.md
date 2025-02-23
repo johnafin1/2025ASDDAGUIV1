@@ -8,7 +8,8 @@ Run `npm run electron` for an electron build. Will open automatically. Won't sha
 
 ## Build application
 
-Run `npm run build` then `npm run package` to build a .exe application at the location expressed in the console, usually root:/dist/win-unpacked 
+Run `npm run build` then `npm run package` to build a .exe application at the location expressed in the console, usually root:/dist/win-unpacked.
+Run the `2025ASDDAGUI.exe` file without changing the folder structure to run the application.
 
 ## Development server
 
